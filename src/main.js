@@ -18,43 +18,60 @@ renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
 
 // Lys
-const directionalLight = new THREE.DirectionalLight(0xA6EFFF, 1)
+const directionalLight = new THREE.DirectionalLight(0x8F756E, 1)
 directionalLight.position.set(2, 1, 2)
 scene.add(directionalLight)
 
-const ambientLight = new THREE.AmbientLight(0x060945, 0.5)
+const ambientLight = new THREE.AmbientLight(0x3D2B25, 0.5)
 scene.add(ambientLight)
 
 // Baggrund
 const imgLoad = new THREE.TextureLoader()
-imgLoad.load('/Billeder/dybtvand.webp', texture => {
+imgLoad.load('/Billeder/ild.jpg', texture => {
   scene.background = texture
 })
 
 // Tekst
 let textMesh // global variabel til animation
 const fontLoader = new FontLoader()
-fontLoader.load('/Fonts/Rubik.json', font => {
-  const textGeo = new TextGeometry('dykker', {
+fontLoader.load('/Fonts/Oi.json', font => {
+  const textGeo = new TextGeometry('Griller', {
     font: font,
-    size: 2,
+    size: 1,
     height: 0.5,
     curveSegments: 12,
   })
 
-  textGeo.center() // centrer geometrien, rotation fra midten
+ textGeo.center() // centrer geometrien, rotation fra midten
+ const loader = new THREE.TextureLoader()
+const texture = loader.load('/Billeder/beef.jpeg')
+texture.colorSpace = THREE.SRGBColorSpace
+texture.wrapS = THREE.RepeatWrapping
+texture.wrapT = THREE.RepeatWrapping
+texture.repeat.set(2, 1)
 
-  const textMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff })
+  const textMaterial = new THREE.MeshPhongMaterial({
+    map: texture,        // billede som farve
+    shininess: 10,       // lidt glans
+    specular: 0x8F756E  // mørk highlight
+  })
+
   textMesh = new THREE.Mesh(textGeo, textMaterial)
   scene.add(textMesh)
 })
-  
+
+// Fog
+const fogColor = 0xFF0000 // rødlig tåge
+const near = 5
+const far = 4
+scene.fog = new THREE.Fog(fogColor, near, far)
+
 // Animation
 function animate() {
   requestAnimationFrame(animate)
   if (textMesh) {
-    textMesh.rotation.x += 0.03
-    textMesh.rotation.y += 0.009
+    textMesh.rotation.x += 0.01
+    textMesh.rotation.y += 0
   }
   renderer.render(scene, camera)
 }
